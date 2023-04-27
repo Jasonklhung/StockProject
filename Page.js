@@ -105,7 +105,7 @@ function GetShelvedGoods(name, specNo){
 	let postParam = {"Name":name,"SpecNo":specNo};
 	postParamList["tab2_param"] = postParam;
 	url = "https://testapi.ladraw.com:21016/Services/GoodsService.asmx/GetShelvedGoods";
-	
+
 	ReloadTime = Date.now();
 
 	$.ajax({
@@ -121,7 +121,7 @@ function GetShelvedGoods(name, specNo){
 					$("div#profile-b1 ul.pagination.pagination-rounded").remove();
 					data = null;
 				}
-				
+
 				//預設第一頁
 				PageIndex = 0;
 				ClickPage();
@@ -140,7 +140,7 @@ function GetEndGoods(name, specNo) {
 	url = "https://testapi.ladraw.com:21016/Services/GoodsService.asmx/GetEndGoods";
 
 	ReloadTime = Date.now();
-	
+
 	$.ajax({
         url: url,
         type: "POST",
@@ -154,7 +154,7 @@ function GetEndGoods(name, specNo) {
 					$("div#messages-b1 ul.pagination.pagination-rounded").remove();
 					data = null;
 				}
-				
+
 				//預設第一頁
 				PageIndex = 0;
 				ClickPage();
@@ -186,7 +186,7 @@ function GetIllegalGoods(name, specNo){
 					$("div#tab4 ul.pagination.pagination-rounded").remove();
 					data = null;
 				}
-				
+
 				//預設第一頁
 				PageIndex = 0;
 				ClickPage();
@@ -210,7 +210,7 @@ function model_to_tr(modal){
 	if(main_tbody == 'tab1_tbody'){
 		return model_to_tr_GetUnlistedGoods(modal, id);
 	}else if(main_tbody == 'tab2_tbody'){
-		return model_to_tr_ShelvedGoods(modal, id); 
+		return model_to_tr_ShelvedGoods(modal, id);
 	}else if(main_tbody == 'tab3_tbody'){
 		return model_to_tr_GetEndGoods(modal, id);
 	}else if(main_tbody == 'tab4_tbody'){
@@ -234,7 +234,7 @@ function model_to_tr_GetUnlistedGoods(modal, id){
 			}
 			specMoreListCount++;
 		});
-		
+
 		temp += model_get_temp(id, modal, specMoreListContent, specList, specListCount, specMoreListCount);
 		specListCount++;
 	});
@@ -254,7 +254,7 @@ function model_get_temp(id, modal, specMoreListContent, specList, specListCount,
 					<input class="form-check-input mt-2" type="checkbox">
 				</div>
 			</td>
-			<td><img src="${modal.GoodsImageList[0].Url}" alt=""></td>` : 
+			<td><img src="${modal.GoodsImageList[0].Url}" alt=""></td>` :
 			`<tr id="${id}_child">
 				<td/>
 				<td/>
@@ -285,7 +285,7 @@ function model_get_temp(id, modal, specMoreListContent, specList, specListCount,
 	return temp;
 }
 
-											
+
 
 // 將API4物件陣列轉為<tr>
 function model_to_tr_ShelvedGoods(modal, id){
@@ -304,11 +304,11 @@ function model_to_tr_ShelvedGoods(modal, id){
 			}
 			specMoreListCount++;
 		});
-		
+
 		temp += model_get_temp(id, modal, specMoreListContent, specList, specListCount, specMoreListCount);
 		specListCount++;
 });
-	return temp;	
+	return temp;
 }
 
 // 將API6物件陣列轉為<tr>
@@ -328,7 +328,7 @@ function model_to_tr_GetEndGoods(modal, id){
 			}
 			specMoreListCount++;
 		});
-		
+
 		temp += model_get_temp(id, modal, specMoreListContent, specList, specListCount, specMoreListCount);
 		specListCount++;
 		});
@@ -387,7 +387,7 @@ function model_to_tr_GetIllegalGoods(modal){
 			</td>
 		</tr>`;
 	return temp;
-	
+
 }
 // 設定當前顯示的tab以及每頁幾筆
 function GetActivePage(){
@@ -399,10 +399,10 @@ function GetActivePage(){
 		main_tbody = 'tab2_tbody';
 	}else if(window.getComputedStyle(document.getElementById("messages-b1")).display == 'block'){
 		PageSize = $('#messages-b1-select').val();
-		main_tbody = 'tab3_tbody';		
+		main_tbody = 'tab3_tbody';
 	}else if(window.getComputedStyle(document.getElementById("tab4")).display == 'block'){
 		PageSize = $('#tab4-select').val();
-		main_tbody = 'tab4_tbody';		
+		main_tbody = 'tab4_tbody';
 	}
 }
 // 依照當前Tab 以及暫存文字輸入 執行查詢
@@ -423,7 +423,7 @@ function PostEndGoods (goodid){
 	// Get Goodid
 	console.log(goodid);
 	var url = "https://testapi.ladraw.com:21016/Services/GoodsService.asmx/EndGoods";
-	
+
 	$("#dialogSubmit").on("click",function(){
 
 		var getSelectedRadio = $("input[name='flexRadioDefault']:checked")
@@ -445,14 +445,17 @@ function PostEndGoods (goodid){
 			contentType: "application/json; charset=utf-8",
 			dataType: "json",
 			success: function(response) {
-			  console.log(response);
-			  // Handle successful response
-			},
-			error: function(xhr, status, error) {
-			  console.error(error);
-			  // Handle error
+				if(response.Stake == "ok"){
+					alert("儲存成功")
+				}
+				else if(response.Stake == "fail"){
+					alert("儲存失敗")
+				}
+				else if(response.Stake == "no user"){
+					alert("帳號已登出或帳號尚未登入");
+					window.location.href = response.url;
+				}
 			}
 		});
 	})
-
 }
