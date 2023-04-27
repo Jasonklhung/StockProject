@@ -215,7 +215,7 @@ function model_to_tr(modal){
 		return model_to_tr_GetEndGoods(modal, id);
 	}else if(main_tbody == 'tab4_tbody'){
 		return model_to_tr_GetIllegalGoods(modal);
-	}
+	}x
 }
 
 function model_to_tr_GetUnlistedGoods(modal, id){
@@ -251,7 +251,7 @@ function model_get_temp(id, modal, specMoreListContent, specList, specListCount,
 			</td>
 			<td>
 				<div class="form-check form-check-inline">
-					<input class="form-check-input mt-2" type="checkbox">
+					<input class="form-check-input mt-2" type="checkbox" name="check">
 				</div>
 			</td>
 			<td><img src="${modal.GoodsImageList[0].Url}" alt=""></td>` :
@@ -420,9 +420,8 @@ function GetCategoryInfo(){
 
 // API 2 儲存資料
 function PostEndGoods (goodid){
-	// Get Goodid
-	console.log(goodid);
-	var url = "https://testapi.ladraw.com:21016/Services/GoodsService.asmx/EndGoods";
+
+	var let = "https://testapi.ladraw.com:21016/Services/GoodsService.asmx/EndGoods";
 
 	$("#dialogSubmit").on("click",function(){
 
@@ -458,4 +457,41 @@ function PostEndGoods (goodid){
 			}
 		});
 	})
+}
+
+function BatchRemoval(){
+
+	let url = "https://testapi.ladraw.com:21016/Services/GoodsService.asmx/EndGoods";
+	let goodId = [];
+	let reason = "";
+
+	$("input[name='check']:checked").each(function() {
+		var getGoodId = parseInt($(this).closest("tr").find("td:eq(4)").text());
+		goodId.push(getGoodId)
+	});
+
+	var data = {
+		"GoodId": goodId,
+		"Reason": reason
+	};
+
+	$.ajax({
+		type: "POST",
+		url: url,
+		data: JSON.stringify(data),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		success: function(response) {
+			if(response.Stake == "ok"){
+				alert("儲存成功")
+			}
+			else if(response.Stake == "fail"){
+				alert("儲存失敗")
+			}
+			else if(response.Stake == "no user"){
+				alert("帳號已登出或帳號尚未登入");
+				window.location.href = response.url;
+			}
+		}
+	});
 }
