@@ -215,7 +215,7 @@ function model_to_tr(modal){
 		return model_to_tr_GetEndGoods(modal, id);
 	}else if(main_tbody == 'tab4_tbody'){
 		return model_to_tr_GetIllegalGoods(modal);
-	}x
+	}
 }
 
 function model_to_tr_GetUnlistedGoods(modal, id){
