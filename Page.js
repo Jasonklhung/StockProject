@@ -105,7 +105,7 @@ function GetShelvedGoods(name, specNo){
 	let postParam = {"Name":name,"SpecNo":specNo};
 	postParamList["tab2_param"] = postParam;
 	url = "https://testapi.ladraw.com:21016/Services/GoodsService.asmx/GetShelvedGoods";
-
+	
 	ReloadTime = Date.now();
 
 	$.ajax({
@@ -121,7 +121,7 @@ function GetShelvedGoods(name, specNo){
 					$("div#profile-b1 ul.pagination.pagination-rounded").remove();
 					data = null;
 				}
-
+				
 				//預設第一頁
 				PageIndex = 0;
 				ClickPage();
@@ -140,7 +140,7 @@ function GetEndGoods(name, specNo) {
 	url = "https://testapi.ladraw.com:21016/Services/GoodsService.asmx/GetEndGoods";
 
 	ReloadTime = Date.now();
-
+	
 	$.ajax({
         url: url,
         type: "POST",
@@ -154,7 +154,7 @@ function GetEndGoods(name, specNo) {
 					$("div#messages-b1 ul.pagination.pagination-rounded").remove();
 					data = null;
 				}
-
+				
 				//預設第一頁
 				PageIndex = 0;
 				ClickPage();
@@ -186,7 +186,7 @@ function GetIllegalGoods(name, specNo){
 					$("div#tab4 ul.pagination.pagination-rounded").remove();
 					data = null;
 				}
-
+				
 				//預設第一頁
 				PageIndex = 0;
 				ClickPage();
@@ -210,7 +210,7 @@ function model_to_tr(modal){
 	if(main_tbody == 'tab1_tbody'){
 		return model_to_tr_GetUnlistedGoods(modal, id);
 	}else if(main_tbody == 'tab2_tbody'){
-		return model_to_tr_ShelvedGoods(modal, id);
+		return model_to_tr_ShelvedGoods(modal, id); 
 	}else if(main_tbody == 'tab3_tbody'){
 		return model_to_tr_GetEndGoods(modal, id);
 	}else if(main_tbody == 'tab4_tbody'){
@@ -234,7 +234,7 @@ function model_to_tr_GetUnlistedGoods(modal, id){
 			}
 			specMoreListCount++;
 		});
-
+		
 		temp += model_get_temp(id, modal, specMoreListContent, specList, specListCount, specMoreListCount);
 		specListCount++;
 	});
@@ -254,7 +254,7 @@ function model_get_temp(id, modal, specMoreListContent, specList, specListCount,
 					<input class="form-check-input mt-2" type="checkbox">
 				</div>
 			</td>
-			<td><img src="${modal.GoodsImageList[0].Url}" alt=""></td>` :
+			<td><img src="${modal.GoodsImageList[0].Url}" alt=""></td>` : 
 			`<tr id="${id}_child">
 				<td/>
 				<td/>
@@ -267,6 +267,7 @@ function model_get_temp(id, modal, specMoreListContent, specList, specListCount,
 			<td>${specList.DiscountPrice != 0 ? '<del>'+specList.Price+'</del> ' + specList.DiscountPrice : specList.Price}</td>
 			<td>${specList.PreparedAmount}</td>	
 			<td>${specList.Amount - specList.PreparedAmount}</td>	
+			<td id="getgoodid" style="hidden:none;">${modal.GoodID}</td>
 			<td>
 				<div class="dropdown">
 					<button class="dropdown-toggle dotsMore" type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="PostEndGoods(${modal.GoodID})">
@@ -276,7 +277,7 @@ function model_get_temp(id, modal, specMoreListContent, specList, specListCount,
 						<a class="dropdown-item" href="#">選項文字1</a>
 						<a class="dropdown-item" href="#">選項文字2</a>
 						<a class="dropdown-item" href="#">選項文字3</a>
-						<a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#model-1">選項文字4</a>
+						<a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#model-1" onclick="GetDelGoods(${modal.GoodID})">選項文字4</a>
 						<a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modal-3">選項文字5</a>
 					</div>
 				</div>
@@ -285,7 +286,7 @@ function model_get_temp(id, modal, specMoreListContent, specList, specListCount,
 	return temp;
 }
 
-
+											
 
 // 將API4物件陣列轉為<tr>
 function model_to_tr_ShelvedGoods(modal, id){
@@ -304,11 +305,11 @@ function model_to_tr_ShelvedGoods(modal, id){
 			}
 			specMoreListCount++;
 		});
-
+		
 		temp += model_get_temp(id, modal, specMoreListContent, specList, specListCount, specMoreListCount);
 		specListCount++;
 });
-	return temp;
+	return temp;	
 }
 
 // 將API6物件陣列轉為<tr>
@@ -328,7 +329,7 @@ function model_to_tr_GetEndGoods(modal, id){
 			}
 			specMoreListCount++;
 		});
-
+		
 		temp += model_get_temp(id, modal, specMoreListContent, specList, specListCount, specMoreListCount);
 		specListCount++;
 		});
@@ -379,18 +380,22 @@ function model_to_tr_GetIllegalGoods(modal){
 			<td>${modal.EndDate.split('T')[0].replace('-','/')}</td>
 			<td class="control">
 				<span data-bs-toggle="modal" data-bs-target="#createModal" style="cursor: pointer;">
-					<i class="far fa-edit"></i>
+					<i class="far fa-edit">
+						<button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">編輯</button>
+					</i>
 				</span>
 				<span data-bs-toggle="modal" data-bs-target="#model-1" style="cursor: pointer;">
-					<i class="far fa-trash-alt"></i>
+					<i class="far fa-trash-alt">
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="GetDelGoods(${modal.GoodID})">刪除</button>
+					</i>
 				</span>
 			</td>
 		</tr>`;
 	return temp;
-
+	
 }
 // 設定當前顯示的tab以及每頁幾筆
-function GetActivePage(){
+function GetActivePage() {
 	if(window.getComputedStyle(document.getElementById("home-b1")).display == 'block'){
 		PageSize = $('#home-b1-select').val();
 		main_tbody = 'tab1_tbody';
@@ -399,10 +404,10 @@ function GetActivePage(){
 		main_tbody = 'tab2_tbody';
 	}else if(window.getComputedStyle(document.getElementById("messages-b1")).display == 'block'){
 		PageSize = $('#messages-b1-select').val();
-		main_tbody = 'tab3_tbody';
+		main_tbody = 'tab3_tbody';		
 	}else if(window.getComputedStyle(document.getElementById("tab4")).display == 'block'){
 		PageSize = $('#tab4-select').val();
-		main_tbody = 'tab4_tbody';
+		main_tbody = 'tab4_tbody';		
 	}
 }
 // 依照當前Tab 以及暫存文字輸入 執行查詢
@@ -420,42 +425,166 @@ function GetCategoryInfo(){
 
 // API 2 儲存資料
 function PostEndGoods (goodid){
-	// Get Goodid
 	console.log(goodid);
-	var url = "https://testapi.ladraw.com:21016/Services/GoodsService.asmx/EndGoods";
+	let get_goodid = goodid;	// Get Goodid
+	let radio_text="";	// Get Which Radio
+	let get_input="";	// Get Reason Input
 
-	$("#dialogSubmit").on("click",function(){
+// Radio 執行一次取文字
+	$(".modal-footer button").one("click",function() {
+		console.log(get_goodid);
+		radio_text = $("input[name=flexRadioDefault]:radio:checked").parent().text().trim();
+			console.log(radio_text);
+			// Get 選項 Input
+			$(".modal-footer").one("click",function() {
+				get_input = $(".col-8 input").val();
+				console.log(get_input);
+				// 判斷是否需要":""
+				let reason_text=""; // Reason
 
-		var getSelectedRadio = $("input[name='flexRadioDefault']:checked")
-		var reason = getSelectedRadio.next("label").text().trim();
-		if(reason == ""){
-			var otherInput = getSelectedRadio.next("div").find("#other");
-			var reason = otherInput.val()
-		}
+					if(get_input=="") {
+						console.log("沒打字!!!");
+						console.log(radio_text);
+						reason_text = radio_text;
+					}else {
+						reason_text = string(radio_text + ":" + get_input);
+						console.log(reason_text);	
+					}
 
-		var data = {
-			"GoodId": [goodid],
-			"Reason": reason
-		};
+					// 原因送出視窗
+					$("#reason_btn").one("click",function() {
+						let data = {"GoodID":[get_goodid],"Reason":reason_text};
+						console.log(reason_text);
+						console.log(data);
+						let url = "https://testapi.ladraw.com:21016/Services/GoodsService.asmx/EndGoods";
+						
+						// POST Radio Input
+
+						$.ajax({
+							url:url,
+							data: JSON.stringify(data),
+							type: "POST",
+							contentType: "application/json; charset=utf-8",
+							dataType: "json",
+							success: function (req) {
+								if (req.Stake == "ok") {
+									alert("儲存成功");
+								} else if (req.Stake == "fali") {
+									alert("儲存失敗請聯繫客服人員")
+								} else if (req.Stake == "no user"){
+									alert("帳號已登出或帳號尚未登入");
+								}
+							},
+							
+						});
+					});
+					
+			});
+	});
+}
+// API 2 儲存資料 End
+
+// API 3 刪除資料
+function GetDelGoods(goodid) {
+
+	let get_goodid = goodid;
+
+	$("#DelGoods").one("click",function() {
+		// console.log("刪除按鈕");
+
+		let url = "https://testapi.ladraw.con:21040/Sdrvices/GoodsService.asmx/DelGoods";
+		let data = {"GoodID":goodid};
+		console.log(data);
 
 		$.ajax({
-			type: "POST",
-			url: url,
+			url:url,
 			data: JSON.stringify(data),
+			type: "POST",
 			contentType: "application/json; charset=utf-8",
 			dataType: "json",
-			success: function(response) {
-				if(response.Stake == "ok"){
-					alert("儲存成功")
-				}
-				else if(response.Stake == "fail"){
-					alert("儲存失敗")
-				}
-				else if(response.Stake == "no user"){
+			success: function (req) {
+				if (req.Stake == "ok") {
+					alert("刪除成功");
+				} else if (req.Stake == "fali") {
+					alert("刪除失敗")
+				} else if (req.Stake == "no user"){
 					alert("帳號已登出或帳號尚未登入");
-					window.location.href = response.url;
 				}
-			}
+			},
 		});
-	})
+	});
+}
+// API 3 刪除資料 End
+
+// Tab1 批次下架
+function tab1_takeoff() {
+	console.log("批次下架");
+	let data = [];
+	$('input[type="checkbox"]:checked').each(function() {
+		let get_goodid = $(this).closest("tr").find("td:eq(9)").text();
+		if ( get_goodid != "") {
+			data.push(get_goodid);
+		}
+		// console.log(get_goodid);
+	});
+
+		let data_request = {"GoodID":data,"Reason":""};
+		console.log(data_request);
+		let url = "https://testapi.ladraw.com:21016/Services/GoodsService.asmx/EndGoods";
+		
+		// POST Radio Input
+
+		$.ajax({
+			url:url,
+			data: JSON.stringify(data_request),
+			type: "POST",
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function (req) {
+				if (req.Stake == "ok") {
+					alert("儲存成功");
+				} else if (req.Stake == "fali") {
+					alert("儲存失敗請聯繫客服人員")
+				} else if (req.Stake == "no user"){
+					alert("帳號已登出或帳號尚未登入");
+				}
+			},
+			
+		});
+	
+}
+
+// Tab 2 批次上架 API 5
+function tab2_pull() {
+	console.log("批次上架");
+	let data = [];
+	$('input[type="checkbox"]:checked').each(function() {
+		let get_goodid = $(this).closest("tr").find("td:eq(9)").text();
+		if ( get_goodid != "") {
+			data.push(get_goodid);
+		}
+		// console.log(get_goodid);
+	});
+
+		let data_request = {"GoodID":data,"Reason":""};
+		console.log(data_request);
+		let url = "https://testapi.ladraw.com:21016/Services/GoodsService.asmx/ShelvedGoods";
+		
+		// POST Radio Input
+		$.ajax({
+			url:url,
+			data: JSON.stringify(data_request),
+			type: "POST",
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function (req) {
+				if (req.Stake == "ok") {
+					alert("儲存成功");
+				} else if (req.Stake == "fali") {
+					alert("儲存失敗請聯繫客服人員")
+				} else if (req.Stake == "no user"){
+					alert("帳號已登出或帳號尚未登入");
+				}
+			},
+		});
 }
